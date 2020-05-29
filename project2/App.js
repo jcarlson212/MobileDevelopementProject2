@@ -4,18 +4,53 @@ import { StyleSheet, Text, View, TextInput, Button } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { createStackNavigator } from '@react-navigation/stack';
 
 const Tab = createBottomTabNavigator();
-
+const Stack = createStackNavigator();
 
 class HomeScreen extends React.Component {
 
+  state = {
+    searchText: "",
+  }
+
+  handleSearchChange = (text) => {
+    this.setState(prevState => ({ ...prevState, searchText: text}))
+  }
+
+  search = () => {
+    this.props.navigation.navigate('Search Results', { searchText: this.state.searchText })
+  }
+
   render() {
-    return(<View style={styles.container}>
+    return(
+        <View style={styles.container}>
           <Text>Search for a movie</Text>
-          <TextInput style={styles.searchInput} onChange={text => handleSearchChange(text)} value={() => this.state.searchText}/>
+          <TextInput style={styles.searchInput} onChangeText={(text) => {this.handleSearchChange(text)}} value={this.state.searchText}/>
           <Button title="Submit" onPress={() => this.search()}/>
         </View>);
+  }
+}
+
+function SearchResultsScreen({ route, navigation }) {
+
+  return(
+        <View style={styles.container}>
+          <Text>Search Results for {route.params.searchText}</Text>
+        </View>);
+  
+}
+
+
+class HomeStack extends React.Component {
+
+  render() {
+    return(
+      <Stack.Navigator>
+        <Stack.Screen name="Search" component={HomeScreen} />
+        <Stack.Screen name="Search Results" component={SearchResultsScreen} />
+      </Stack.Navigator>);
   }
 }
 
@@ -29,19 +64,6 @@ class SettingsScreen extends React.Component {
 }
 
 export default class App extends React.Component {
-
-  state = {
-    searchText: "",
-  }
-
-  handleSearchChange = (text) => {
-    this.setState({ ...state, searchText: text})
-  }
-
-  search = () => {
-
-  }
-
 
   render() {
     return (
@@ -68,7 +90,7 @@ export default class App extends React.Component {
           inactiveTintColor: 'gray',
         }}
       >
-        <Tab.Screen name="Home" component={HomeScreen} />
+        <Tab.Screen name="Home" component={HomeStack} />
         <Tab.Screen name="Settings" component={SettingsScreen} />
       </Tab.Navigator>
 
