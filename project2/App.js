@@ -33,8 +33,25 @@ class HomeScreen extends React.Component {
   }
 }
 
-function SearchResultsScreen({ route, navigation }) {
+async function getSearchResultsFromAPI(text) {
+  try {
+    const response = await fetch('https://api.themoviedb.org/3/movie/550?api_key=3048ad741820d1bdfd364868f03dfcd5', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      mode: "cors"
+    })
+    const result = await response.text()
+    console.log(result)
+  }catch(err){
+    console.log(err)
+  }
+  
+}
 
+function SearchResultsScreen({ route, navigation }) {
+  getSearchResultsFromAPI(route.params.searchText)
   return(
         <View style={styles.container}>
           <Text>Search Results for {route.params.searchText}</Text>
