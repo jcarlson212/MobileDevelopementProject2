@@ -45,29 +45,11 @@ async function getSearchResultsFromAPI(text) {
     })
     const result = await response.text()
     console.log(result)
-    return parseSearchResultsFromAPI(result)
+    return result
   }catch(err){
     console.log(err)
   }
 }
-
-function parseSearchResultsFromAPI(response) {
-  const res = JSON.parse(response)
-  const results = res.results
-
-  return results.map((obj) => 
-    (
-    <ScrollView style={styles.searchResult}>
-      <Text style={styles.searchText}>{obj.title}</Text>
-      <Text style={styles.searchText}>{obj.release_date}</Text>
-      <Text style={styles.searchText}>{obj.popularity}</Text>
-      <Text style={styles.searchText}>{obj.vote_average}</Text>
-      <Text style={styles.searchText}>{obj.vote_count}</Text>
-    </ScrollView>)
-  )
-}
-
-
 
 class SearchResultsScreen extends React.Component {
   //({ route, navigation })
@@ -75,9 +57,28 @@ class SearchResultsScreen extends React.Component {
     posts: []
   }
 
+  
   async componentDidMount() {
-    const newPosts = await getSearchResultsFromAPI(this.props.route.params.searchText)
+    const response = await getSearchResultsFromAPI(this.props.route.params.searchText)
+    const res = JSON.parse(response)
+    const results = res.results
+
+    const newPosts = results.map((obj) => 
+      (
+      <ScrollView style={styles.searchResult}>
+        <Text style={styles.searchText}>{obj.title}</Text>
+        <Text style={styles.searchText}>{obj.release_date}</Text>
+        <Text style={styles.searchText}>{obj.popularity}</Text>
+        <Text style={styles.searchText}>{obj.vote_average}</Text>
+        <Text style={styles.searchText}>{obj.vote_count}</Text>
+        <Button onPress={() => this.selectMovie(obj)} title='Select' style={styles.selectButton}>Select</Button>
+      </ScrollView>)
+    )
     this.setState((prevState) => ({ ...prevState, posts: newPosts}))
+  }
+
+  selectMovie = (movieObject) => {
+
   }
 
 
@@ -92,6 +93,12 @@ class SearchResultsScreen extends React.Component {
   
 }
 
+//This loads details about a movie the user selects
+class Movie extends React.Component {
+
+
+}
+
 
 class HomeStack extends React.Component {
 
@@ -100,6 +107,7 @@ class HomeStack extends React.Component {
       <Stack.Navigator>
         <Stack.Screen name="Search" component={HomeScreen} />
         <Stack.Screen name="Search Results" component={SearchResultsScreen} />
+        <Stack.Screen name="Movie" component={Movie} />
       </Stack.Navigator>);
   }
 }
@@ -173,5 +181,9 @@ const styles = StyleSheet.create({
   },
   searchText: {
     alignSelf: 'center',
-  }
+  },
+  selectButton: {
+    width: 40,
+  },
+
 });
