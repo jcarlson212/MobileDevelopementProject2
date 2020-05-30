@@ -19,10 +19,10 @@ export default class HomeScreen extends React.Component {
   
     render() {
       return(
-          <View style={styles.container}>
-            <Text>Search for a movie</Text>
+          <View style={styles.homeContainer}>
+            <Text style={{ fontSize: 18, color: 'gray' }}>Search for a movie</Text>
             <TextInput style={styles.searchInput} onChangeText={(text) => {this.handleSearchChange(text)}} value={this.state.searchText}/>
-            <Button title="Submit" onPress={() => this.search()}/>
+            <Button color='tomato' title="Submit" onPress={() => this.search()}/>
           </View>);
     }
   }

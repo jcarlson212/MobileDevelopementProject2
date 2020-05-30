@@ -23,7 +23,7 @@ export default class App extends React.Component {
             if (route.name === 'Home') {
               iconName = focused
                 ? 'ios-home'
-                : 'ios-home-outline';
+                : 'md-home';
             } else if (route.name === 'Settings') {
               iconName = focused ? 'ios-list-box' : 'ios-list';
             }
@@ -40,10 +40,6 @@ export default class App extends React.Component {
         <Tab.Screen name="Home" component={HomeStack} />
         <Tab.Screen name="Settings" component={SettingsScreen} />
       </Tab.Navigator>
-
-
-
-
       </NavigationContainer>
       
     );
@@ -52,27 +48,41 @@ export default class App extends React.Component {
 }
 
 export const styles = StyleSheet.create({
-  container: {
+  movieContainer: {
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: '20%',
+  },
+  settingsContainer: {
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  homeContainer: {
     flex: 1,
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
   },
   searchInput: {
-    height: 40,
+    fontSize: 18,
     borderColor: 'gray',
     borderWidth: 2,
     justifyContent: "center",
+    padding: 10,
+    margin: 10,
   },
   searchResult: {
     height: 200,
     alignSelf: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
+    margin: '20',
   },
   searchText: {
     alignSelf: 'center',
   },
-  selectButton: {
-    width: 40,
-  },
-
 });
