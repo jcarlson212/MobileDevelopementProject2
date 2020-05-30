@@ -1,140 +1,14 @@
 import 'react-native-gesture-handler';
 import React from 'react';
-import { StyleSheet, Text, View, TextInput, Button } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { createStackNavigator } from '@react-navigation/stack';
-import { ScrollView } from 'react-native-gesture-handler';
+import SettingsScreen from './screens/SettingsScreen.js'
+import HomeStack from './HomeStack.js'
 
 const Tab = createBottomTabNavigator();
-const Stack = createStackNavigator();
 
-class HomeScreen extends React.Component {
-
-  state = {
-    searchText: "",
-  }
-
-  handleSearchChange = (text) => {
-    this.setState(prevState => ({ ...prevState, searchText: text}))
-  }
-
-  search = () => {
-    this.props.navigation.navigate('Search Results', { searchText: this.state.searchText })
-  }
-
-  render() {
-    return(
-        <View style={styles.container}>
-          <Text>Search for a movie</Text>
-          <TextInput style={styles.searchInput} onChangeText={(text) => {this.handleSearchChange(text)}} value={this.state.searchText}/>
-          <Button title="Submit" onPress={() => this.search()}/>
-        </View>);
-  }
-}
-
-async function getSearchResultsFromAPI(text) {
-  try {
-    const response = await fetch('https://api.themoviedb.org/3/search/movie?api_key=3048ad741820d1bdfd364868f03dfcd5&language=en-US&query=' + text, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      mode: "cors"
-    })
-    const result = await response.text()
-    console.log(result)
-    return result
-  }catch(err){
-    console.log(err)
-  }
-}
-
-class SearchResultsScreen extends React.Component {
-  //({ route, navigation })
-  state = {
-    posts: []
-  }
-
-  
-  async componentDidMount() {
-    const response = await getSearchResultsFromAPI(this.props.route.params.searchText)
-    const res = JSON.parse(response)
-    const results = res.results
-
-    const newPosts = results.map((obj) => 
-      (
-      <ScrollView style={styles.searchResult}>
-        <Text style={styles.searchText}>{obj.title}</Text>
-        <Text style={styles.searchText}>{obj.release_date}</Text>
-        <Text style={styles.searchText}>{obj.popularity}</Text>
-        <Text style={styles.searchText}>{obj.vote_average}</Text>
-        <Text style={styles.searchText}>{obj.vote_count}</Text>
-        <Button onPress={() => this.selectMovie(obj)} title='Select' style={styles.selectButton}>Select</Button>
-      </ScrollView>)
-    )
-    this.setState((prevState) => ({ ...prevState, posts: newPosts}))
-  }
-
-  selectMovie = (movieObject) => {
-    this.props.navigation.navigate('Movie', { movie: movieObject })
-  }
-
-
-  render() {
-    return(
-        <ScrollView>
-          {console.log(this.props.route.params.searchText)}
-          <Text style={styles.searchText}>Search Results for {this.props.route.params.searchText}</Text>
-          {this.state.posts}
-        </ScrollView>);
-  }
-  
-}
-
-//This loads details about a movie the user selects
-class Movie extends React.Component {
-
-  render() {
-    const { genre_ids, id, original_title, overview, popularity, title, vote_average, vote_count } = this.props.route.params.movie
-    console.log(this.props.route.params.movie)
-    return (
-      <View>
-        <Text style={styles.searchText}>Information about {title}</Text>
-        <Text style={styles.searchText}>original title: {original_title}</Text>
-        <Text style={styles.searchText}>overview: {overview}</Text>
-        <Text style={styles.searchText}>popularity: {popularity}</Text>
-        <Text style={styles.searchText}>genre id's: {genre_ids}</Text>
-        <Text style={styles.searchText}>vote average: {vote_average}</Text>
-        <Text style={styles.searchText}>vote count: {vote_count}</Text>
-        <Text style={styles.searchText}>movie id: {id}</Text>
-      </View>
-    )
-  }
-}
-
-
-class HomeStack extends React.Component {
-
-  render() {
-    return(
-      <Stack.Navigator>
-        <Stack.Screen name="Search" component={HomeScreen} />
-        <Stack.Screen name="Search Results" component={SearchResultsScreen} />
-        <Stack.Screen name="Movie" component={Movie} />
-      </Stack.Navigator>);
-  }
-}
-
-class SettingsScreen extends React.Component {
-
-  render() {
-    return(<View style={styles.container}>
-          <Text>Settings</Text>
-        </View>);
-  }
-}
 
 export default class App extends React.Component {
 
@@ -148,8 +22,8 @@ export default class App extends React.Component {
 
             if (route.name === 'Home') {
               iconName = focused
-                ? 'ios-information-circle'
-                : 'ios-information-circle-outline';
+                ? 'ios-home'
+                : 'ios-home-outline';
             } else if (route.name === 'Settings') {
               iconName = focused ? 'ios-list-box' : 'ios-list';
             }
@@ -177,7 +51,7 @@ export default class App extends React.Component {
   
 }
 
-const styles = StyleSheet.create({
+export const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
