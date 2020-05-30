@@ -78,7 +78,7 @@ class SearchResultsScreen extends React.Component {
   }
 
   selectMovie = (movieObject) => {
-
+    this.props.navigation.navigate('Movie', { movie: movieObject })
   }
 
 
@@ -96,7 +96,13 @@ class SearchResultsScreen extends React.Component {
 //This loads details about a movie the user selects
 class Movie extends React.Component {
 
-
+  render() {
+    return (
+      <View>
+        <Text>Information about </Text>
+      </View>
+    )
+  }
 }
 
 
