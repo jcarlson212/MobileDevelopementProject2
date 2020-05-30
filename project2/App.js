@@ -5,6 +5,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { createStackNavigator } from '@react-navigation/stack';
+import { ScrollView } from 'react-native-gesture-handler';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -35,7 +36,7 @@ class HomeScreen extends React.Component {
 
 async function getSearchResultsFromAPI(text) {
   try {
-    const response = await fetch('https://api.themoviedb.org/3/movie/550?api_key=3048ad741820d1bdfd364868f03dfcd5', {
+    const response = await fetch('https://api.themoviedb.org/3/search/movie?api_key=3048ad741820d1bdfd364868f03dfcd5&language=en-US&query=' + text, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -44,18 +45,50 @@ async function getSearchResultsFromAPI(text) {
     })
     const result = await response.text()
     console.log(result)
+    return parseSearchResultsFromAPI(result)
   }catch(err){
     console.log(err)
   }
-  
 }
 
-function SearchResultsScreen({ route, navigation }) {
-  getSearchResultsFromAPI(route.params.searchText)
-  return(
-        <View style={styles.container}>
-          <Text>Search Results for {route.params.searchText}</Text>
-        </View>);
+function parseSearchResultsFromAPI(response) {
+  const res = JSON.parse(response)
+  const results = res.results
+
+  return results.map((obj) => 
+    (
+    <ScrollView style={styles.searchResult}>
+      <Text style={styles.searchText}>{obj.title}</Text>
+      <Text style={styles.searchText}>{obj.release_date}</Text>
+      <Text style={styles.searchText}>{obj.popularity}</Text>
+      <Text style={styles.searchText}>{obj.vote_average}</Text>
+      <Text style={styles.searchText}>{obj.vote_count}</Text>
+    </ScrollView>)
+  )
+}
+
+
+
+class SearchResultsScreen extends React.Component {
+  //({ route, navigation })
+  state = {
+    posts: []
+  }
+
+  async componentDidMount() {
+    const newPosts = await getSearchResultsFromAPI(this.props.route.params.searchText)
+    this.setState((prevState) => ({ ...prevState, posts: newPosts}))
+  }
+
+
+  render() {
+    return(
+        <ScrollView>
+          {console.log(this.props.route.params.searchText)}
+          <Text style={styles.searchText}>Search Results for {this.props.route.params.searchText}</Text>
+          {this.state.posts}
+        </ScrollView>);
+  }
   
 }
 
@@ -133,5 +166,12 @@ const styles = StyleSheet.create({
     borderColor: 'gray',
     borderWidth: 2,
     justifyContent: "center",
+  },
+  searchResult: {
+    height: 200,
+    alignSelf: 'center',
+  },
+  searchText: {
+    alignSelf: 'center',
   }
 });
